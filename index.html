@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Game</title>
+<style>
+    canvas {
+        display: block;
+        margin: 0 auto;
+        border: 1px solid black;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="480" height="320"></canvas>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Player
+    const player = {
+        x: canvas.width / 2,
+        y: canvas.height - 30,
+        width: 30,
+        height: 30,
+        speed: 5
+    };
+
+    // Controls
+    let touchStartX = null;
+
+    canvas.addEventListener('touchstart', touchStartHandler, false);
+    canvas.addEventListener('touchmove', touchMoveHandler, false);
+
+    function touchStartHandler(e) {
+        e.preventDefault();
+        touchStartX = e.touches[0].clientX;
+    }
+
+    function touchMoveHandler(e) {
+        e.preventDefault();
+        if (touchStartX !== null) {
+            const touchX = e.touches[0].clientX;
+            const dx = touchX - touchStartX;
+            if (dx > 0 && player.x < canvas.width - player.width) {
+                player.x += player.speed;
+            } else if (dx < 0 && player.x > 0) {
+                player.x -= player.speed;
+            }
+            touchStartX = touchX;
+        }
+    }
+
+    function drawPlayer() {
+        ctx.beginPath();
+        ctx.rect(player.x, player.y, player.width, player.height);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPlayer();
+    }
+
+    function main() {
+        draw();
+        requestAnimationFrame(main);
+    }
+
+    main();
+</script>
+</body>
+</html>
